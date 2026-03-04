@@ -226,9 +226,9 @@ export default function VideoChat() {
           isSocketConnected={isSocketConnected}
         />
 
-        {/* Mobile chat toggle */}
+        {/* Chat toggle (all screens) */}
         <button
-          className="md:hidden flex items-center gap-1.5 text-sm text-text-secondary px-3 py-1.5 rounded-xl bg-bg-elevated border border-white/10"
+          className="flex items-center gap-1.5 text-sm text-text-secondary px-3 py-1.5 rounded-xl bg-bg-elevated border border-white/10"
           onClick={() => setIsChatOpen((prev) => !prev)}
         >
           <MessageSquare size={15} />
@@ -311,13 +311,15 @@ export default function VideoChat() {
         </div>
 
         {/* ── Text chat panel (right on desktop) ── */}
-        <div className="hidden md:flex flex-col w-80 lg:w-96 shrink-0 border-l border-white/5">
-          <TextChat
-            messages={messages}
-            onSendMessage={sendMessage}
-            isConnected={chatState === "connected"}
-          />
-        </div>
+        {isChatOpen && (
+          <div className="hidden md:flex flex-col w-80 lg:w-96 shrink-0 border-l border-white/5">
+            <TextChat
+              messages={messages}
+              onSendMessage={sendMessage}
+              isConnected={chatState === "connected"}
+            />
+          </div>
+        )}
       </div>
 
       {/* ── Mobile chat drawer ── */}
