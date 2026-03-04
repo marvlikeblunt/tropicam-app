@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,19 +6,56 @@
 
 /* ── CSS Custom Properties ───────────────────────────────────────────────── */
 :root {
-  --color-primary: #e8443a;
-  --color-primary-dark: #c4362e;
-  --color-secondary: #1db48d;
-  --color-secondary-dark: #179474;
-  --color-accent: #f5a623;
-  --color-bg-dark: #0f1419;
-  --color-bg-card: #1a2028;
-  --color-bg-elevated: #242d38;
-  --color-text-primary: #f7f7f7;
-  --color-text-secondary: #8b95a5;
+  --background: 30 40% 96%;
+  --foreground: 25 30% 15%;
+
+  --card: 30 50% 98%;
+  --card-foreground: 25 30% 15%;
+
+  --popover: 30 50% 98%;
+  --popover-foreground: 25 30% 15%;
+
+  --primary: 24 85% 60%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 15 60% 85%;
+  --secondary-foreground: 25 30% 20%;
+
+  --muted: 30 30% 90%;
+  --muted-foreground: 25 20% 45%;
+
+  --accent: 140 50% 45%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 25 30% 85%;
+  --input: 25 30% 85%;
+  --ring: 24 85% 60%;
+
+  --radius: 1rem;
+
+  /* ── Tropical palette ───────────────────────────────────────────────────── */
+  --coral: 15 80% 70%;
+  --coral-light: 15 85% 85%;
+  --palm-green: 140 50% 45%;
+  --palm-green-light: 140 45% 60%;
+  --coconut-brown: 25 50% 30%;
+  --sand: 40 40% 90%;
+  --ocean-blue: 195 70% 55%;
+  --sunset-orange: 24 85% 60%;
+  --sunset-pink: 350 70% 75%;
+  --action-green: 152 69% 43%;
 }
 
 /* ── Base styles ─────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  border-color: hsl(var(--border));
+}
+
 html,
 body {
   height: 100%;
@@ -26,85 +63,50 @@ body {
 }
 
 body {
-  background-color: var(--color-bg-dark);
-  color: var(--color-text-primary);
-  font-family: "DM Sans", sans-serif;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: "Nunito", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Scrollbar ────────────────────────────────────────────────────────────── */
-.scrollbar-thin::-webkit-scrollbar {
-  width: 4px;
+/* ── Keyframe animations ─────────────────────────────────────────────────── */
+@keyframes wave {
+  0%, 100% { transform: rotate(-3deg); }
+  50%       { transform: rotate(3deg); }
 }
 
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
 }
 
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 100vw;
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(34, 185, 115, 0.4); }
+  50%       { box-shadow: 0 0 40px rgba(34, 185, 115, 0.7); }
 }
 
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+@keyframes fade-in {
+  0%   { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Typography ──────────────────────────────────────────────────────────── */
-.font-outfit {
-  font-family: "Outfit", sans-serif;
+@keyframes bounce-in {
+  0%   { opacity: 0; transform: scale(0.8); }
+  60%  { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-.font-dm-sans {
-  font-family: "DM Sans", sans-serif;
-}
-
-/* ── Gradient text utility ───────────────────────────────────────────────── */
-.gradient-text {
-  background: linear-gradient(90deg, #e8443a, #f5a623);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* ── Glassmorphism utility ───────────────────────────────────────────────── */
-.glass {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* ── Wave animation ──────────────────────────────────────────────────────── */
-@keyframes waveMove {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(-3%);
-  }
-}
-
-/* ── Pulse glow ──────────────────────────────────────────────────────────── */
-@keyframes pulseGlow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(232, 68, 58, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 24px 8px rgba(232, 68, 58, 0.12);
-  }
-}
-
-.animate-pulse-glow {
-  animation: pulseGlow 2.5s ease-in-out infinite;
-}
+/* ── Utility classes ─────────────────────────────────────────────────────── */
+.animate-wave      { animation: wave 2s ease-in-out infinite; }
+.animate-float     { animation: float 3s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-fade-in   { animation: fade-in 0.6s ease-out forwards; }
+.animate-bounce-in { animation: bounce-in 0.5s ease-out forwards; }
 
 /* ── Focus visible (accessibility) ──────────────────────────────────────── */
 :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
   border-radius: 6px;
 }
@@ -116,6 +118,21 @@ video {
 
 /* ── Selection ───────────────────────────────────────────────────────────── */
 ::selection {
-  background-color: rgba(232, 68, 58, 0.3);
-  color: var(--color-text-primary);
+  background-color: hsl(var(--primary) / 0.25);
+  color: hsl(var(--foreground));
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 100vw;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.4);
 }

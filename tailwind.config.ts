@@ -9,67 +9,89 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
         primary: {
-          DEFAULT: "#E8443A",
-          dark: "#C4362E",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "#1DB48D",
-          dark: "#179474",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
-        accent: "#F5A623",
-        "bg-dark": "#0F1419",
-        "bg-card": "#1A2028",
-        "bg-elevated": "#242D38",
-        "text-primary": "#F7F7F7",
-        "text-secondary": "#8B95A5",
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        tropical: {
+          coral: "hsl(var(--coral))",
+          "coral-light": "hsl(var(--coral-light))",
+          palm: "hsl(var(--palm-green))",
+          "palm-light": "hsl(var(--palm-green-light))",
+          coconut: "hsl(var(--coconut-brown))",
+          sand: "hsl(var(--sand))",
+          ocean: "hsl(var(--ocean-blue))",
+          sunset: "hsl(var(--sunset-orange))",
+          pink: "hsl(var(--sunset-pink))",
+          action: "hsl(var(--action-green))",
+        },
       },
       fontFamily: {
-        outfit: ["Outfit", "sans-serif"],
-        "dm-sans": ["DM Sans", "sans-serif"],
+        nunito: ["Nunito", "sans-serif"],
+        quicksand: ["Quicksand", "sans-serif"],
       },
-      backgroundImage: {
-        "gradient-tropical": "linear-gradient(135deg, #E8443A, #F5A623)",
-        "gradient-dark": "linear-gradient(180deg, #0F1419, #1A2028)",
+      borderRadius: {
+        DEFAULT: "var(--radius)",
       },
       animation: {
-        "wave-slow": "wave 8s ease-in-out infinite",
-        "wave-medium": "wave 6s ease-in-out infinite reverse",
-        "pulse-glow": "pulseGlow 2s ease-in-out infinite",
-        "radar-ping": "radarPing 2s ease-out infinite",
-        "fade-in": "fadeIn 0.5s ease-out",
-        "slide-up": "slideUp 0.4s ease-out",
+        wave: "wave 2s ease-in-out infinite",
+        float: "float 3s ease-in-out infinite",
+        wiggle: "wiggle 1s ease-in-out infinite",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "fade-in": "fade-in 0.6s ease-out forwards",
+        "bounce-in": "bounce-in 0.5s ease-out forwards",
       },
       keyframes: {
         wave: {
-          "0%, 100%": { transform: "translateX(0)" },
-          "50%": { transform: "translateX(-5%)" },
+          "0%, 100%": { transform: "rotate(-3deg)" },
+          "50%": { transform: "rotate(3deg)" },
         },
-        pulseGlow: {
-          "0%, 100%": {
-            boxShadow: "0 0 0 0 rgba(232, 68, 58, 0.4)",
-          },
-          "50%": {
-            boxShadow: "0 0 20px 10px rgba(232, 68, 58, 0.1)",
-          },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
         },
-        radarPing: {
-          "0%": { transform: "scale(1)", opacity: "0.8" },
-          "100%": { transform: "scale(2.5)", opacity: "0" },
+        wiggle: {
+          "0%, 100%": { transform: "rotate(-2deg)" },
+          "50%": { transform: "rotate(2deg)" },
         },
-        fadeIn: {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "0 0 20px rgba(34, 185, 115, 0.4)" },
+          "50%": { boxShadow: "0 0 40px rgba(34, 185, 115, 0.7)" },
         },
-        slideUp: {
-          "0%": { transform: "translateY(20px)", opacity: "0" },
-          "100%": { transform: "translateY(0)", opacity: "1" },
+        "fade-in": {
+          "0%": { opacity: "0", transform: "translateY(15px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
-      },
-      boxShadow: {
-        "glow-primary": "0 0 30px rgba(232, 68, 58, 0.3)",
-        "glow-secondary": "0 0 30px rgba(29, 180, 141, 0.3)",
-        card: "0 4px 24px rgba(0, 0, 0, 0.4)",
+        "bounce-in": {
+          "0%": { opacity: "0", transform: "scale(0.8)" },
+          "60%": { opacity: "1", transform: "scale(1.05)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
       },
     },
   },
