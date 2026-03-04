@@ -1,0 +1,35 @@
+{
+  "name": "tropicam",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx server.ts",
+    "build": "next build && npx tsup server.ts --format cjs --out-dir dist",
+    "start": "NODE_ENV=production node dist/server.js",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
+    "framer-motion": "^11.3.8",
+    "lucide-react": "^0.408.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/uuid": "^10",
+    "typescript": "^5",
+    "tailwindcss": "^3.4.1",
+    "postcss": "^8",
+    "autoprefixer": "^10.0.1",
+    "tsx": "^4.16.2",
+    "tsup": "^8.2.4",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5"
+  }
+}
