@@ -1,14 +1,22 @@
 interface LogoProps {
+  size?: "sm" | "md" | "lg";
   className?: string;
 }
 
-export default function Logo({ className = "" }: LogoProps) {
+const SIZE = {
+  sm: { svg: 32, text: "text-xl" },
+  md: { svg: 42, text: "text-2xl" },
+  lg: { svg: 52, text: "text-3xl md:text-4xl" },
+};
+
+export default function Logo({ size = "lg", className = "" }: LogoProps) {
+  const { svg: svgSize, text: textSize } = SIZE[size];
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       {/* Camera SVG with tropical palette */}
       <svg
-        width="52"
-        height="52"
+        width={svgSize}
+        height={svgSize}
         viewBox="0 0 52 52"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +49,7 @@ export default function Logo({ className = "" }: LogoProps) {
 
       {/* Brand name */}
       <span
-        className="font-nunito font-extrabold text-3xl md:text-4xl tracking-tight"
+        className={`font-nunito font-extrabold tracking-tight ${textSize}`}
         style={{
           background: "linear-gradient(90deg, hsl(24,85%,60%), hsl(15,80%,70%), hsl(140,50%,45%))",
           WebkitBackgroundClip: "text",
