@@ -29,7 +29,7 @@ export default function ChatControls({
   const isSearching = chatState === "searching";
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-3 md:gap-4 p-4 z-10">
+    <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-3 md:gap-4 p-4 z-30">
       {/* Background blur */}
       <div
         className="absolute inset-0 backdrop-blur-md"
