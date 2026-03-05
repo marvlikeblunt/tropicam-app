@@ -16,33 +16,21 @@ export default function SearchingOverlay({ onCancel }: SearchingOverlayProps) {
       exit={{ opacity: 0 }}
       className="absolute inset-0 flex flex-col items-center justify-center bg-bg-dark/95 backdrop-blur-sm z-20"
     >
-      {/* Radar animation */}
-      <div className="relative w-28 h-28 mb-8" aria-hidden="true">
+      {/* Dots animation */}
+      <div className="flex items-center gap-2 mb-8" aria-hidden="true">
         {[0, 1, 2].map((i) => (
           <motion.div
             key={i}
-            className="absolute inset-0 rounded-full border-2 border-primary"
-            initial={{ scale: 1, opacity: 0.7 }}
-            animate={{ scale: 2.8, opacity: 0 }}
+            className="w-2 h-2 rounded-full bg-text-secondary"
+            animate={{ opacity: [0.2, 1, 0.2] }}
             transition={{
-              duration: 2.2,
+              duration: 1.2,
               repeat: Infinity,
-              delay: i * 0.7,
-              ease: "easeOut",
+              delay: i * 0.2,
+              ease: "easeInOut",
             }}
           />
         ))}
-        {/* Center dot */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <motion.div
-            className="w-10 h-10 rounded-full"
-            style={{
-              background: "linear-gradient(135deg, #E8443A, #F5A623)",
-            }}
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          />
-        </div>
       </div>
 
       <motion.h3
