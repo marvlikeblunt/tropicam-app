@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "tsx server.ts",
     "build": "next build && npx tsup server.ts --format cjs --out-dir dist",
+    "build:socket": "npx tsup server-socket.ts --format cjs --out-dir dist --tsconfig tsconfig.server.json",
     "start": "NODE_ENV=production node dist/server.js",
+    "start:socket": "NODE_ENV=production node dist/server-socket.js",
     "lint": "next lint"
   },
   "dependencies": {

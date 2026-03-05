@@ -1,0 +1,22 @@
+# Dockerfile for the standalone Socket.IO server (Railway / Render / Fly.io)
+# The Next.js frontend (Vercel) connects to this server via NEXT_PUBLIC_SOCKET_URL.
+
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY server-socket.ts tsconfig.server.json ./
+RUN npx tsup server-socket.ts --format cjs --out-dir dist --tsconfig tsconfig.server.json
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 socketio
+COPY --from=builder /app/package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+COPY --from=builder --chown=socketio:nodejs /app/dist ./dist
+USER socketio
+EXPOSE 4000
+ENV PORT=4000
+CMD ["node", "dist/server-socket.js"]
