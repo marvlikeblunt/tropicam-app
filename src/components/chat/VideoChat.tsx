@@ -302,6 +302,7 @@ export default function VideoChat() {
             chatState={chatState}
             isMuted={isMuted}
             isCameraOff={isCameraOff}
+            isSocketConnected={isSocketConnected}
             onToggleMute={toggleMute}
             onToggleCamera={toggleCamera}
             onSkip={handleSkip}

@@ -8,6 +8,7 @@ interface ChatControlsProps {
   chatState: ChatState;
   isMuted: boolean;
   isCameraOff: boolean;
+  isSocketConnected: boolean;
   onToggleMute: () => void;
   onToggleCamera: () => void;
   onSkip: () => void;
@@ -19,6 +20,7 @@ export default function ChatControls({
   chatState,
   isMuted,
   isCameraOff,
+  isSocketConnected,
   onToggleMute,
   onToggleCamera,
   onSkip,
@@ -79,13 +81,19 @@ export default function ChatControls({
         {/* Main action button */}
         {chatState === "idle" || chatState === "partner-left" ? (
           <motion.button
-            whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(29,180,141,0.4)" }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onStartSearch}
-            className="px-6 py-3 md:px-8 md:py-4 rounded-2xl font-semibold text-white text-sm md:text-base transition-all duration-200"
+            whileHover={isSocketConnected ? { scale: 1.05, boxShadow: "0 0 20px rgba(29,180,141,0.4)" } : {}}
+            whileTap={isSocketConnected ? { scale: 0.95 } : {}}
+            onClick={isSocketConnected ? onStartSearch : undefined}
+            disabled={!isSocketConnected}
+            title={!isSocketConnected ? "Connexion au serveur en cours..." : undefined}
+            className="px-6 py-3 md:px-8 md:py-4 rounded-2xl font-semibold text-white text-sm md:text-base transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ background: "linear-gradient(135deg, #1DB48D, #179474)" }}
           >
-            {chatState === "partner-left" ? "Chercher quelqu'un d'autre" : "Lancer la recherche"}
+            {!isSocketConnected
+              ? "Connexion..."
+              : chatState === "partner-left"
+              ? "Chercher quelqu'un d'autre"
+              : "Lancer la recherche"}
           </motion.button>
         ) : (
           <>

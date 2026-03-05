@@ -17,31 +17,29 @@ export function useWebRTC(
 ): UseWebRTCReturn {
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
 
-  // Refs so callbacks always have the latest values without re-creating them
   const pcRef = useRef<RTCPeerConnection | null>(null);
   const currentRoomIdRef = useRef<string | null>(null);
   const socketRef = useRef(socket);
   const localStreamRef = useRef(localStream);
 
-  // Keep refs in sync
-  useEffect(() => {
-    socketRef.current = socket;
-  }, [socket]);
+  // Buffer ICE candidates that arrive before setRemoteDescription is called
+  const iceCandidateBuffer = useRef<RTCIceCandidateInit[]>([]);
+  const remoteDescSet = useRef(false);
 
-  useEffect(() => {
-    localStreamRef.current = localStream;
-  }, [localStream]);
+  useEffect(() => { socketRef.current = socket; }, [socket]);
+  useEffect(() => { localStreamRef.current = localStream; }, [localStream]);
 
   const cleanup = useCallback(() => {
     if (pcRef.current) {
       pcRef.current.ontrack = null;
       pcRef.current.onicecandidate = null;
       pcRef.current.oniceconnectionstatechange = null;
-      pcRef.current.onnegotiationneeded = null;
       pcRef.current.close();
       pcRef.current = null;
     }
     currentRoomIdRef.current = null;
+    iceCandidateBuffer.current = [];
+    remoteDescSet.current = false;
     setRemoteStream(null);
   }, []);
 
@@ -49,14 +47,15 @@ export function useWebRTC(
     async (roomId: string, isInitiator: boolean): Promise<void> => {
       const socket = socketRef.current;
       const localStream = localStreamRef.current;
-
       if (!socket || !localStream) return;
 
-      // Tear down any existing connection first
+      // Tear down any previous connection
       if (pcRef.current) {
         pcRef.current.close();
         pcRef.current = null;
       }
+      iceCandidateBuffer.current = [];
+      remoteDescSet.current = false;
       setRemoteStream(null);
 
       currentRoomIdRef.current = roomId;
@@ -64,20 +63,18 @@ export function useWebRTC(
       const pc = new RTCPeerConnection(rtcConfig);
       pcRef.current = pc;
 
-      // Add all local tracks to the peer connection
+      // Add local tracks
       localStream.getTracks().forEach((track) => {
         pc.addTrack(track, localStream);
       });
 
-      // When a remote track arrives, expose it as remoteStream
+      // Expose remote stream when tracks arrive
       pc.ontrack = (event: RTCTrackEvent) => {
         const [stream] = event.streams;
-        if (stream) {
-          setRemoteStream(stream);
-        }
+        if (stream) setRemoteStream(stream);
       };
 
-      // Relay ICE candidates to the other peer via the server
+      // Relay our ICE candidates to the partner
       pc.onicecandidate = (event: RTCPeerConnectionIceEvent) => {
         if (event.candidate && socketRef.current && currentRoomIdRef.current) {
           socketRef.current.emit("ice-candidate", {
@@ -87,14 +84,12 @@ export function useWebRTC(
         }
       };
 
-      // Attempt ICE restart on failure
+      // Restart ICE on failure
       pc.oniceconnectionstatechange = () => {
-        if (pc.iceConnectionState === "failed") {
-          pc.restartIce();
-        }
+        if (pc.iceConnectionState === "failed") pc.restartIce();
       };
 
-      // Initiator creates and sends the offer
+      // Initiator creates the offer
       if (isInitiator) {
         try {
           const offer = await pc.createOffer({
@@ -111,7 +106,7 @@ export function useWebRTC(
         }
       }
     },
-    [] // Uses refs, so no external deps needed
+    []
   );
 
   // Handle incoming SDP signals and ICE candidates
@@ -125,9 +120,15 @@ export function useWebRTC(
 
       try {
         if (data.signal.type === "offer") {
-          await pc.setRemoteDescription(
-            new RTCSessionDescription(data.signal)
-          );
+          await pc.setRemoteDescription(new RTCSessionDescription(data.signal));
+          remoteDescSet.current = true;
+
+          // Drain any buffered ICE candidates now that remote desc is set
+          for (const candidate of iceCandidateBuffer.current) {
+            await pc.addIceCandidate(new RTCIceCandidate(candidate));
+          }
+          iceCandidateBuffer.current = [];
+
           const answer = await pc.createAnswer();
           await pc.setLocalDescription(answer);
           if (socketRef.current) {
@@ -137,9 +138,14 @@ export function useWebRTC(
             });
           }
         } else if (data.signal.type === "answer") {
-          await pc.setRemoteDescription(
-            new RTCSessionDescription(data.signal)
-          );
+          await pc.setRemoteDescription(new RTCSessionDescription(data.signal));
+          remoteDescSet.current = true;
+
+          // Drain buffered ICE candidates
+          for (const candidate of iceCandidateBuffer.current) {
+            await pc.addIceCandidate(new RTCIceCandidate(candidate));
+          }
+          iceCandidateBuffer.current = [];
         }
       } catch (err) {
         console.error("[WebRTC] Error handling signal:", err);
@@ -149,10 +155,16 @@ export function useWebRTC(
     const handleIceCandidate = async (data: IceCandidatePayload) => {
       const pc = pcRef.current;
       if (!pc) return;
+
+      if (!remoteDescSet.current) {
+        // Remote description not yet set — buffer the candidate
+        iceCandidateBuffer.current.push(data.candidate);
+        return;
+      }
+
       try {
         await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
       } catch (err) {
-        // Ignore benign ICE errors (e.g. candidates arriving after connection)
         console.debug("[WebRTC] ICE candidate error (usually benign):", err);
       }
     };
@@ -166,12 +178,7 @@ export function useWebRTC(
     };
   }, [socket]);
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      cleanup();
-    };
-  }, [cleanup]);
+  useEffect(() => () => { cleanup(); }, [cleanup]);
 
   return { remoteStream, startConnection, cleanup };
 }
